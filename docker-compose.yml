@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "root"
+      MONGO_INITDB_ROOT_PASSWORD: "example"
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:latest
+    # force a password to match your REDIS_PASSWORD env var
+    command: ["redis-server", "--requirepass", "someredispassword"]
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  expensy-backend:
+    build: ./expensy_backend
+    # If you prefer to use the dockerhub image, replace `build:` with:
+    # image: romainconfavreux/expensy_backend:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URI: "mongodb://root:example@mongo:27017"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: "someredispassword"
+    ports:
+      - "8706:8706"
+    depends_on:
+      - mongo
+      - redis
+
+  expensy-frontend:
+    build: ./expensy_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:8706"
+    # Or use the remote image:
+    # image: romainconfavreux/expensy_frontend:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - expensy-backend
+
+volumes:
+  mongo-data:
+  redis-data:
