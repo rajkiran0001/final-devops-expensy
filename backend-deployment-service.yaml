@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expensy-backend
+  namespace: expensy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expensy-backend
+  template:
+    metadata:
+      labels:
+        app: expensy-backend
+    spec:
+      containers:
+        - name: expensy-backend
+          image: romainconfavreux/expensy_backend:latest
+          ports:
+            - containerPort: 8706
+          env:
+            - name: DATABASE_URI
+              value: "mongodb://root:example@mongo:27017/expensydb?authSource=admin"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              value: "someredispassword"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expensy-backend
+  namespace: expensy
+spec:
+  selector:
+    app: expensy-backend
+  ports:
+    - port: 80       # cluster service port
+      targetPort: 8706
+  type: LoadBalancer    # internal-only, frontend + ingress will use this

@@ -1,0 +1,48 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy-to-cluster:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Login to Azure
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Get AKS credentials so kubectl can connect
+      - name: Configure kubectl for AKS
+        run: |
+          az aks get-credentials \
+            --resource-group AKSRajProjectResourcetGroup \
+            --name RajAKSCluster \
+            --overwrite-existing
+
+      # Deploy Kubernetes manifests
+      - name: Deploy Kubernetes manifests
+        run: |
+          kubectl apply -f redis-statefulset.yaml
+          kubectl apply -f mongo-statefulset.yaml
+          kubectl apply -f backend-deployment-service.yaml
+          kubectl apply -f frontend-deployment-service.yaml
+
+      # Update deployments with new Docker images
+      - name: Update deployments with new images
+        run: |
+          kubectl set image deployment/expensy-backend expensy-backend=${{ secrets.DOCKERHUB_USERNAME }}/expensy-backend:${{ github.sha }} --record
+          kubectl set image deployment/expensy-frontend expensy-frontend=${{ secrets.DOCKERHUB_USERNAME }}/expensy-frontend:${{ github.sha }} --record
+
+          # Wait for deployments to roll out
+          kubectl rollout status deployment/expensy-backend
+          kubectl rollout status deployment/expensy-frontend
+
+          # Confirm pods
+          kubectl get pods -o wide
