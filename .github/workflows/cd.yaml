@@ -1,0 +1,44 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy-to-cluster:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-south-2
+
+      - name: Configure kubectl
+        run: |
+          aws eks --region eu-south-2 update-kubeconfig --name voting-cluster-sec
+
+      - name: Deploy Kubernetes manifests
+        run: |
+          kubectl apply -f redis-statefulset.yaml
+          kubectl apply -f mongo-statefulset.yaml
+          kubectl apply -f backend-deployment-service.yaml
+          kubectl apply -f frontend-deployment-service.yaml
+
+      # find a way to delete existing images so it can get the new ones without the cached ones
+      - name: Update deployments with new image
+        run: |
+          kubectl set image deployment/result-deployment result-container=${{ secrets.DOCKERHUB_USERNAME }}/expensy-backend:${{ github.sha }}
+          kubectl set image deployment/vote-deployment vote-container=${{ secrets.DOCKERHUB_USERNAME }}/expensy-frontend:${{ github.sha }}
+
+          # Wait for deployments to be ready
+          kubectl rollout status deployment/expensy-backend
+          kubectl rollout status deployment/expensy-frontend
+
+          # Confirm pods
+          kubectl get pods -o wide

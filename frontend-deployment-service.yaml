@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expensy-frontend
+  namespace: expensy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expensy-frontend
+  template:
+    metadata:
+      labels:
+        app: expensy-frontend
+    spec:
+      containers:
+        - name: expensy-frontend
+          image: rajdoc111/expensy-frontend:v1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              value: "http://expensy-backend.expensy.svc.cluster.local"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expensy-frontend
+  namespace: expensy
+spec:
+  selector:
+    app: expensy-frontend
+  ports:
+    - port: 80       # service port
+      targetPort: 3000
+  type: ClusterIP
