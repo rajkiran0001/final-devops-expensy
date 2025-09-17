@@ -15,12 +15,12 @@ spec:
     spec:
       containers:
         - name: expensy-backend
-          image: rajdoc111/expensy-backend:v1
+          image: romainconfavreux/expensy_backend:latest
           ports:
             - containerPort: 8706
           env:
             - name: DATABASE_URI
-              value: "mongodb://root:example@mongo:27017/expensydb"
+              value: "mongodb://root:example@mongo:27017/expensydb?authSource=admin"
             - name: REDIS_HOST
               value: "redis"
             - name: REDIS_PORT
@@ -37,6 +37,6 @@ spec:
   selector:
     app: expensy-backend
   ports:
-    - port: 80       # service port
+    - port: 80       # cluster service port
       targetPort: 8706
-  type: ClusterIP
+  type: LoadBalancer    # internal-only, frontend + ingress will use this

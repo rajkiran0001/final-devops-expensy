@@ -20,7 +20,7 @@ spec:
             - containerPort: 3000
           env:
             - name: NEXT_PUBLIC_API_URL
-              value: "http://expensy-backend.expensy.svc.cluster.local"
+              value: "http://172.184.242.240"
 ---
 apiVersion: v1
 kind: Service
@@ -33,4 +33,4 @@ spec:
   ports:
     - port: 80       # service port
       targetPort: 3000
-  type: ClusterIP
+  type: LoadBalancer

@@ -7,7 +7,7 @@ spec:
   ports:
     - port: 27017
       targetPort: 27017
-  clusterIP: None   # Headless service needed for StatefulSet
+  clusterIP: None   # Headless service (works fine for single replica too)
   selector:
     app: mongo
 ---
