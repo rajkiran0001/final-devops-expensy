@@ -23,7 +23,7 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/expensy-frontend:${{ github.sha }} ./expensy-frontend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/expensy-frontend:${{ github.sha }}
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/expensy-backend:${{ github.sha }} ./expensy-backend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/expensy-backend:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/expensy_frontend:${{ github.sha }} ./expensy_frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/expensy_frontend:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/expensy_backend:${{ github.sha }} ./expensy_backend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/expensy_backend:${{ github.sha }}
