@@ -20,7 +20,7 @@ spec:
             - containerPort: 3000
           env:
             - name: NEXT_PUBLIC_API_URL
-              value: "http://172.184.242.240"
+              value: "http://172.184.232.34"
 ---
 apiVersion: v1
 kind: Service

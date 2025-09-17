@@ -5,22 +5,26 @@ metadata:
   namespace: expensy
   annotations:
     kubernetes.io/ingress.class: nginx
+    #cert-manager.io/cluster-issuer: letsencrypt-prod   # optional, if using TLS
 spec:
   rules:
-    - host: expensy.diogohack.shop   # change to your domain or use /etc/hosts
+    - host: fe.raj.diogohack.shop
       http:
         paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: expensy-backend
-                port:
-                  number: 80
           - path: /
             pathType: Prefix
             backend:
               service:
                 name: expensy-frontend
+                port:
+                  number: 80
+    - host: be.raj.diogohack.shop
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: expensy-backend
                 port:
                   number: 80
