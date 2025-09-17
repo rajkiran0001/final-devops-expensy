@@ -39,4 +39,4 @@ spec:
   ports:
     - port: 80       # cluster service port
       targetPort: 8706
-  type: LoadBalancer    # internal-only, frontend + ingress will use this
+  type: ClusterIP    # internal-only, frontend + ingress will use this

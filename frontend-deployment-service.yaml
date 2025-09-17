@@ -20,7 +20,7 @@ spec:
             - containerPort: 3000
           env:
             - name: NEXT_PUBLIC_API_URL
-              value: "http://172.184.242.240"
+              value: "http://api.expensy.raj.diogohack.shop"
 ---
 apiVersion: v1
 kind: Service
@@ -33,4 +33,4 @@ spec:
   ports:
     - port: 80       # service port
       targetPort: 3000
-  type: LoadBalancer
+  type: ClusterIP
