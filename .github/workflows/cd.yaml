@@ -37,12 +37,12 @@ jobs:
       # Update deployments with new Docker images
       - name: Update deployments with new images
         run: |
-          kubectl set image deployment/expensy_backend expensy_backend=${{ secrets.DOCKERHUB_USERNAME }}/expensy_backend:${{ github.sha }} --record
-          kubectl set image deployment/expensy_frontend expensy_frontend=${{ secrets.DOCKERHUB_USERNAME }}/expensy_frontend:${{ github.sha }} --record
+          kubectl set image deployment/expensy-backend expensy-backend=${{ secrets.DOCKERHUB_USERNAME }}/expensy-backend:${{ github.sha }} --record
+          kubectl set image deployment/expensy-frontend expensy-frontend=${{ secrets.DOCKERHUB_USERNAME }}/expensy-frontend:${{ github.sha }} --record
 
           # Wait for deployments to roll out
-          kubectl rollout status deployment/expensy_backend
-          kubectl rollout status deployment/expensy_frontend
+          kubectl rollout status deployment/expensy-backend
+          kubectl rollout status deployment/expensy-frontend
 
           # Confirm pods
           kubectl get pods -o wide
