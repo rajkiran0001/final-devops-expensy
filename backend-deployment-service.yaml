@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: expensy-backend
-          image: romainconfavreux/expensy_backend:latest
+          image: rajdoc111/expensy-backend:latest
           ports:
             - containerPort: 8706
           env:
